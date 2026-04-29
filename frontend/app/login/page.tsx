@@ -73,8 +73,8 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-[#8B8888] mt-6 font-geist">
         By clicking continue, you agree to our{" "}
-        <a href="/terms" className="text-white hover:underline">Terms of Service</a> and{" "}
-        <a href="/privacy" className="text-white hover:underline">Privacy Policy</a>.
+        <a href="/terms" className="text-[#8B8888] hover:underline hover:text-white transition-colors">Terms of Service</a> and{" "}
+        <a href="/privacy" className="text-[#8B8888] hover:underline hover:text-white transition-colors">Privacy Policy</a>.
       </p>
     </div>
   );
