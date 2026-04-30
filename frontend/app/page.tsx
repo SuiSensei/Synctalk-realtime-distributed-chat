@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import SignupPage from "./login/page";
+import { UserDropdown } from "@/components/navigation-bar/user-dropdown";
 
 export default function Home() {
   return (
-    <SignupPage />
+    <div className="flex items-center justify-center min-h-screen">
+      <UserDropdown />
+    </div>
   );
 }

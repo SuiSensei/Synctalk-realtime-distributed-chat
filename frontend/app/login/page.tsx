@@ -61,12 +61,13 @@ export default function LoginPage() {
 
         <div className="w-1/2">
           <Image
-            src="/login.png" 
+            src="/signup.png" 
             alt="SyncTalk Login Background"
             width={400}
             height={600}
             className="w-full h-full object-cover"
             priority
+            loading="eager"
           />
         </div>
       </div>
