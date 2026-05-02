@@ -15,17 +15,17 @@ export function AppDropdown() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="flex items-center gap-3 h-full p-0 px-2 rounded-none shadow-none transition-colors border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent"
+          className="flex items-center gap-3 h-full p-0 px-4 rounded-none shadow-none transition-colors border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent"
         >
           {}
-          <MessagesSquare className="w-8 h-8 text-foreground" />
+          <MessagesSquare className="w-7 h-7 text-foreground" />
           
           {}
-          <span className="text-xl font-bold text-foreground tracking-tight">
+          <span className="text-sm font-bold text-foreground tracking-tight">
             SyncTalk
           </span>
           
-          <ChevronsUpDown className="w-5 h-5 text-muted-foreground ml-1" />
+          <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-1" />
         </Button>
       </DropdownMenuTrigger>
       

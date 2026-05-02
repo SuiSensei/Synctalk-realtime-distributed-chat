@@ -18,7 +18,7 @@ export function UserDropdown() {
           variant="ghost"
           className="flex items-center gap-3 h-full p-0 px-2 rounded-none shadow-none transition-colors border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent"
         >
-          <Avatar className="w-7 h-7 rounded-full">
+          <Avatar className="w-6 h-6 rounded-full">
             <AvatarFallback className="bg-emerald-500"></AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start text-left hidden sm:flex">
