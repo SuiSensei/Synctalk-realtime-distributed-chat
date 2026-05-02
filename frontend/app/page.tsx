@@ -1,11 +1,12 @@
 "use client";
 
-import { UserDropdown } from "@/components/navigation-bar/user-dropdown";
+import { NavigationBar } from "@/components/navigation-bar/navigation-bar";
 
 export default function Home() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <UserDropdown />
+
+    <div className="min-h-screen bg-[#141414] p-4">
+      <NavigationBar />
     </div>
   );
 }
