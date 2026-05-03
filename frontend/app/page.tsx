@@ -1,12 +1,12 @@
 "use client";
 
-import { NavigationBar } from "@/components/navigation-bar/navigation-bar";
+import ProfileSidebar from "@/components/chat-bar/profile-sidebar";
 
 export default function Home() {
   return (
 
     <div className="min-h-screen bg-[#141414] p-4">
-      <NavigationBar />
+        <ProfileSidebar/>
     </div>
   );
 }
