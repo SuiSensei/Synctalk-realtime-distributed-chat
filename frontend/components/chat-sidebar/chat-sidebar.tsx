@@ -15,8 +15,8 @@ const MOCK_CHATS = [
 ];
 
 export function ChatSidebar() {
-  return (
-    <aside className="flex flex-col w-[340px] h-full bg-[#1C1C1C] border-r border-[#2A2A2A]">
+  return ( 
+    <aside className="flex flex-col w-85 h-[calc(100dvh-2rem)] scroll-auto bg-[#1C1C1C] border-r border-[#2A2A2A]">
       {}
       <div className="flex items-center justify-between p-4 pb-3">
         <h2 className="text-xl font-semibold text-[#F3F4F6] tracking-tight">
@@ -24,7 +24,6 @@ export function ChatSidebar() {
         </h2>
         <NewChatDropdown />
       </div>
-
       {}
       <div className="px-4 pb-3 border-b border-[#2A2A2A]">
         <div className="relative flex items-center">
