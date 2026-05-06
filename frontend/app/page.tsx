@@ -1,14 +1,22 @@
-import { ChatSidebar } from "@/components/chat-sidebar/chat-sidebar";
-import { ChatContainer } from "@/components/chat-window/chat-container";
+"use client";
+
+import { ChatBubble } from "@/components/chat-window/chat-bubble";
 
 export default function Home() {
   return (
-    <main className="flex h-screen w-full bg-[#1C1C1C] overflow-hidden text-[#F3F4F6]">
-      {}
-      <ChatSidebar />
-      
-      {}
-      <ChatContainer />
-    </main>
+    <div className="min-h-screen bg-[#141414] flex flex-col items-center justify-center gap-6">
+      {/* Normal message */}
+      <ChatBubble
+        message="Aysa nalibang pako."
+        timestamp="10:38 PM"
+        avatarFallback="A"
+      />
+
+      {/* Typing state */}
+      <ChatBubble
+        typing={true}
+        avatarFallback="A"
+      />
+    </div>
   );
 }
