@@ -30,7 +30,6 @@ export function ChatContainer() {
       <div className="flex-1 overflow-y-auto p-4 flex flex-col justify-end">
         <div className="flex flex-col items-center justify-center h-full text-[#6B7280] border-2 border-dashed border-[#343434] rounded-xl m-4">
           <p className="text-sm font-medium text-[#9CA3AF]">Chat Bubbles Area</p>
-          <p className="text-xs mt-1">@Gerlie Campion's components will go here</p>
         </div>
       </div>
 
