@@ -4,7 +4,6 @@ import { MoreHorizontal, UserCircle2 } from "lucide-react";
 export function ChatContainer() {
   return (
     <div className="flex flex-col flex-1 h-full bg-[#1C1C1C] border-l border-[#2A2A2A]">
-      {}
       <div className="flex items-center justify-between p-4 border-b border-[#2A2A2A]">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -12,7 +11,7 @@ export function ChatContainer() {
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#10B981] border-2 border-[#1C1C1C] rounded-full" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-[#F3F4F6]">Jhey Guide</span>
+            <span className="text-sm font-semibold text-[#F3F4F6]">Jhey Gulde</span>
             <span className="text-xs text-[#10B981]">Online</span>
           </div>
         </div>
@@ -28,15 +27,14 @@ export function ChatContainer() {
         </div>
       </div>
 
-      {}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col justify-end">
         <div className="flex flex-col items-center justify-center h-full text-[#6B7280] border-2 border-dashed border-[#343434] rounded-xl m-4">
           <p className="text-sm font-medium text-[#9CA3AF]">Chat Bubbles Area</p>
+          <p className="text-xs mt-1">@Gerlie Campion's components will go here</p>
         </div>
       </div>
 
-      {}
-      <ChatTextBox />
+      <ChatTextBox typingUser={null} />
     </div>
   );
 }
