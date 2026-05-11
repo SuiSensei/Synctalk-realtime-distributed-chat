@@ -332,15 +332,40 @@ wss.on('connection', (connection, request) => {
           readReceipts[data.messageId].push(userId);
         }
 
-        // Notify sender about read receipt
-        const message = messages[data.messageId];
-        if (message) {
-          sendToUser(message.sender.id, {
+        // Support both group messages and direct messages
+        const groupMessage = messages[data.messageId];
+        if (groupMessage) {
+          sendToUser(groupMessage.sender.id, {
             type: 'message_read',
             messageId: data.messageId,
             userId: userId,
             readBy: readReceipts[data.messageId],
           });
+        } else {
+          const directMessage =
+            directMessages[data.messageId] ||
+            Object.values(directMessages).find(dm => dm && dm.id === data.messageId);
+
+          if (directMessage) {
+            directMessage.read = true;
+
+            const senderId =
+              (directMessage.sender && directMessage.sender.id) ||
+              directMessage.senderId;
+            const recipientId =
+              (directMessage.recipient && directMessage.recipient.id) ||
+              directMessage.recipientId;
+            const notifyUserId = senderId === userId ? recipientId : senderId;
+
+            if (notifyUserId) {
+              sendToUser(notifyUserId, {
+                type: 'message_read',
+                messageId: data.messageId,
+                userId: userId,
+                readBy: readReceipts[data.messageId],
+              });
+            }
+          }
         }
       }
 
