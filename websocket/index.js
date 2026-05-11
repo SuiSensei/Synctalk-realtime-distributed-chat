@@ -194,28 +194,34 @@ wss.on('connection', (connection, request) => {
 
       // TYPING INDICATORS 
       if (data.type === 'typing' && data.groupId) {
-        typingUsers[userId] = { groupId: data.groupId, timestamp: Date.now() };
-        const typingData = {
-          type: 'user_typing',
-          groupId: data.groupId,
-          user: {
-            id: userId,
-            username: users[userId].username,
-          },
-        };
-        broadcastToGroup(data.groupId, typingData);
-        console.log(`⌨${users[userId].username} is typing in group ${data.groupId}`);
+        const group = groups[data.groupId];
+        if (group && group.members.includes(userId)) {
+          typingUsers[userId] = { groupId: data.groupId, timestamp: Date.now() };
+          const typingData = {
+            type: 'user_typing',
+            groupId: data.groupId,
+            user: {
+              id: userId,
+              username: users[userId].username,
+            },
+          };
+          broadcastToGroup(data.groupId, typingData);
+          console.log(`⌨${users[userId].username} is typing in group ${data.groupId}`);
+        }
       }
 
       // STOPPED TYPING
       if (data.type === 'stopped_typing' && data.groupId) {
-        delete typingUsers[userId];
-        const stoppedData = {
-          type: 'user_stopped_typing',
-          groupId: data.groupId,
-          userId: userId,
-        };
-        broadcastToGroup(data.groupId, stoppedData);
+        const group = groups[data.groupId];
+        if (group && group.members.includes(userId)) {
+          delete typingUsers[userId];
+          const stoppedData = {
+            type: 'user_stopped_typing',
+            groupId: data.groupId,
+            userId: userId,
+          };
+          broadcastToGroup(data.groupId, stoppedData);
+        }
       }
 
       // CREATE GROUP
