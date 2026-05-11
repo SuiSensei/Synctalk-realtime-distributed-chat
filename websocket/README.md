@@ -85,12 +85,9 @@ Open multiple WebSocket connections to simulate multiple users chatting.
 ```
 websocket/
 ├── index.js                # Main WebSocket server (ALL FEATURES)
-├── server.ts              # Socket.IO version (not used)
-├── client.ts              # TypeScript client library
-├── PROTOCOL.md            # Full protocol documentation
-├── README.md              # This file
-├── package.json           # Dependencies
-└── tsconfig.json          # TypeScript config
+├── PROTOCOL.md             # Full protocol documentation
+├── README.md               # This file
+└── package.json            # Dependencies
 ```
 
 ---
