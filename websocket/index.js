@@ -8,14 +8,73 @@ const server = http.createServer();
 const wss = new WebSocket.Server({ server });
 const port = 8000;
 
+// Retention limits for in-memory stores to avoid unbounded growth.
+const MAX_CONNECTIONS = 10000;
+const MAX_USERS = 10000;
+const MAX_GROUPS = 5000;
+const MAX_MESSAGE_BUCKETS = 10000;
+const MAX_DIRECT_MESSAGE_BUCKETS = 10000;
+const MAX_TYPING_USERS = 10000;
+const MAX_READ_RECEIPT_BUCKETS = 10000;
+
+const createBoundedStore = (maxEntries) => {
+  const target = {};
+  const order = [];
+
+  const evictIfNeeded = () => {
+    while (order.length > maxEntries) {
+      const oldestKey = order.shift();
+      if (oldestKey !== undefined) {
+        delete target[oldestKey];
+      }
+    }
+  };
+
+  return new Proxy(target, {
+    set(obj, prop, value) {
+      if (typeof prop === 'symbol') {
+        obj[prop] = value;
+        return true;
+      }
+
+      const key = String(prop);
+      if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+        order.push(key);
+      } else {
+        const existingIndex = order.indexOf(key);
+        if (existingIndex !== -1) {
+          order.splice(existingIndex, 1);
+        }
+        order.push(key);
+      }
+
+      obj[key] = value;
+      evictIfNeeded();
+      return true;
+    },
+    deleteProperty(obj, prop) {
+      if (typeof prop === 'symbol') {
+        return delete obj[prop];
+      }
+
+      const key = String(prop);
+      const existingIndex = order.indexOf(key);
+      if (existingIndex !== -1) {
+        order.splice(existingIndex, 1);
+      }
+      return delete obj[key];
+    }
+  });
+};
+
 // Data structures
-const connections = {};        
-const users = {};              
-const groups = {};             
-const messages = {};           
-const directMessages = {};     
-const typingUsers = {};        
-const readReceipts = {};       
+const connections = createBoundedStore(MAX_CONNECTIONS);
+const users = createBoundedStore(MAX_USERS);
+const groups = createBoundedStore(MAX_GROUPS);
+const messages = createBoundedStore(MAX_MESSAGE_BUCKETS);
+const directMessages = createBoundedStore(MAX_DIRECT_MESSAGE_BUCKETS);
+const typingUsers = createBoundedStore(MAX_TYPING_USERS);
+const readReceipts = createBoundedStore(MAX_READ_RECEIPT_BUCKETS);
 
 
 //Broadcast user list and presence to all connected clients
