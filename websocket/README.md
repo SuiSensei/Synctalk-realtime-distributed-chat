@@ -108,7 +108,6 @@ websocket/
 | `join_group` | → | Join existing group |
 | `add_reaction` | → | React to message |
 | `mark_as_read` | → | Mark message as read |
-| `file_upload` | → | Upload file |
 | `update_status` | → | Change online status |
 
 **→** = Client sends  
