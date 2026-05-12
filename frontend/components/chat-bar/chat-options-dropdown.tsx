@@ -1,100 +1,47 @@
 "use client";
-import { Ban, MoreHorizontal, Trash2, UserRound } from "lucide-react";
-import { LucideIcon } from "lucide-react";
 
-interface OptionItemProps {
-  icon: LucideIcon;
-  label: string;
-  danger?: boolean;
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, LogOut, Trash2 } from "lucide-react";
+import { useRooms } from "@/lib/hooks/use-rooms";
+
+interface ChatOptionsDropdownProps {
+  roomId: string;
 }
 
-function OptionItem({ icon: Icon, label, danger }: OptionItemProps) {
+export function ChatOptionsDropdown({ roomId }: ChatOptionsDropdownProps) {
+  const { leaveRoom } = useRooms();
+
+  const handleLeave = () => {
+    if (confirm("Are you sure you want to leave this group?")) {
+      leaveRoom(roomId);
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        padding: "13px 20px",
-        cursor: "pointer",
-        borderRadius: 10,
-        transition: "background 0.12s",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = "#2e2e36")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-    >
-      <Icon
-        size={22}
-        color={danger ? "#e05252" : "#c4c4d4"}
-        strokeWidth={1.6}
-      />
-      <span
-        style={{
-          fontSize: 17,
-          fontWeight: 500,
-          color: danger ? "#e05252" : "#f0f0f5",
-          fontFamily: "'Geist', sans-serif",
-          letterSpacing: "-0.2px",
-        }}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-9 w-9 text-[#9CA3AF] hover:text-[#F3F4F6] hover:bg-[#2A2A2A]">
+          <MoreHorizontal className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        className="w-48 bg-[#1C1C1C] border-[#343434] rounded-[6px] shadow-xl p-1"
+        align="end"
       >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-export default function ChatOptions() {
-  return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-      `}</style>
-
-      <div
-        style={{
-          fontFamily: "'Geist', sans-serif",
-          background: "#000",
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div style={{ position: "relative", width: 340 }}>
-          {/* Trigger button */}
-          <div
-            style={{
-              width: 52,
-              height: 52,
-              background: "#1e1e26",
-              borderRadius: 14,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              marginBottom: 10,
-              marginLeft: 4,
-            }}
-          >
-            <MoreHorizontal size={20} color="#f0f0f5" strokeWidth={2} />
+        <DropdownMenuItem onClick={handleLeave} className="p-0 cursor-pointer rounded-[4px] focus:!bg-[#2A2A2A] data-[highlighted]:!bg-[#2A2A2A] focus:!text-[#F3F4F6] data-[highlighted]:!text-[#F3F4F6] focus:[&_*]:!text-[#F3F4F6] data-[highlighted]:[&_*]:!text-[#F3F4F6] transition-colors">
+          <div className="flex items-center gap-3 w-full h-full p-2 text-red-500 hover:text-red-400">
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm">Leave Group</span>
           </div>
-
-          {/* Dropdown */}
-          <div
-            style={{
-              background: "#23232d",
-              borderRadius: 16,
-              padding: "6px 8px",
-              width: "100%",
-            }}
-          >
-            <OptionItem icon={Ban} label="Block" danger />
-            <OptionItem icon={Trash2} label="Delete" danger />
-            <OptionItem icon={UserRound} label="Archive" danger={false} />
-          </div>
-        </div>
-      </div>
-    </>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
