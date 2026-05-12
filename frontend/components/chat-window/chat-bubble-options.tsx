@@ -9,12 +9,13 @@ import {
 import { Reply, Trash2, Pin, MoreHorizontal } from "lucide-react";
 
 interface ChatBubbleOptionsProps {
+  onReact?: (emoji: string) => void;
   onReply?: () => void;
   onRemove?: () => void;
   onPin?: () => void;
 }
 
-export function ChatBubbleOptions({ onReply, onRemove, onPin }: ChatBubbleOptionsProps) {
+export function ChatBubbleOptions({ onReact, onReply, onRemove, onPin }: ChatBubbleOptionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,6 +27,17 @@ export function ChatBubbleOptions({ onReply, onRemove, onPin }: ChatBubbleOption
       <DropdownMenuContent
         className="w-48 bg-[#1e2030] border border-white/[0.08] rounded-[14px] p-1.5 shadow-2xl"
       >
+        <div className="flex justify-around p-2 mb-1 bg-white/5 rounded-lg">
+          {["👍", "❤️", "😂", "😮", "😢", "😡"].map(emoji => (
+            <button
+              key={emoji}
+              className="text-lg hover:scale-125 transition-transform"
+              onClick={() => onReact?.(emoji)}
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
         <DropdownMenuItem
           onClick={onReply}
           className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-white/90 text-[15px] cursor-pointer hover:bg-white/[0.09] focus:bg-white/[0.09]"
