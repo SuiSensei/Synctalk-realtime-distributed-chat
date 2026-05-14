@@ -60,7 +60,11 @@ export function useRooms() {
     const handleNewMessage = (data: any) => {
       setRooms((prev) => {
         const exists = prev.find((r) => r.id === data.roomId);
-        if (!exists) return prev; // will be picked up by rooms_list refresh
+        if (!exists) {
+          // Room not in list yet — refresh to pick it up
+          sendMessage({ type: "get_rooms" });
+          return prev;
+        }
 
         const updated = prev.map((r) =>
           r.id === data.roomId ? { ...r, lastMessage: data } : r
