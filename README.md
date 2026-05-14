@@ -54,9 +54,9 @@ SyncTalk follows a **client-server architecture** in which WebSocket connections
 ┌─────────┐    ┌───────────┐    ┌─────────┐
 │ Client B├───►│  Server   │◄───┤ Client C│
 └─────────┘ WS │ (WS Hub)  │ WS └─────────┘
-              └─────┬─────┘
-                    │ WS
-                    ▼
+               └─────┬─────┘
+                     │ WS
+                     ▼
               ┌─────────────┐
               │   Client D  │
               └─────────────┘
@@ -274,5 +274,3 @@ See the list of [contributors](https://github.com/<your-username>/synctalk-realt
 - Thanks to the open-source community
 
 ---
-
-If you found this project helpful, please consider giving it a star.
