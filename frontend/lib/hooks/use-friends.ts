@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { usePresence } from './use-presence';
+import { useWebSocket } from '../contexts/websocket-context';
 
 export interface FriendRecord {
   id: string;
@@ -17,6 +18,7 @@ export function useFriends() {
   const [sentRequests, setSentRequests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { myProfile } = usePresence();
+  const { sendMessage, subscribe } = useWebSocket();
   const supabase = useMemo(() => createClient(), []);
   // Track the user ID as a stable string for dependency arrays
   const myUserId = myProfile?.id ?? null;
@@ -62,9 +64,36 @@ export function useFriends() {
     setLoading(false);
   }, [myUserId, supabase]);
 
+  // Initial fetch
   useEffect(() => {
     fetchFriendsAndRequests();
   }, [fetchFriendsAndRequests]);
+
+  // Subscribe to real-time friend events via WebSocket
+  useEffect(() => {
+    const unsubReceived = subscribe('friend_request_received', () => {
+      fetchFriendsAndRequests();
+    });
+
+    const unsubSent = subscribe('friend_request_sent', () => {
+      fetchFriendsAndRequests();
+    });
+
+    const unsubAccepted = subscribe('friend_request_accepted', () => {
+      fetchFriendsAndRequests();
+    });
+
+    const unsubRejected = subscribe('friend_request_rejected', () => {
+      fetchFriendsAndRequests();
+    });
+
+    return () => {
+      unsubReceived();
+      unsubSent();
+      unsubAccepted();
+      unsubRejected();
+    };
+  }, [subscribe, fetchFriendsAndRequests]);
 
   const searchUsers = useCallback(async (query: string) => {
     if (!query.trim()) return [];
@@ -81,36 +110,20 @@ export function useFriends() {
     return data || [];
   }, [supabase]);
 
+  // Send friend request through WebSocket (so server can notify the recipient in real time)
   const sendRequest = useCallback(async (targetUserId: string) => {
     if (!myUserId) return;
-    const { error } = await supabase
-      .from('friends')
-      .insert({
-        user_id: myUserId,
-        friend_id: targetUserId,
-        status: 'pending'
-      });
-    if (error) console.error('Error sending friend request:', error);
-    await fetchFriendsAndRequests();
-  }, [myUserId, supabase, fetchFriendsAndRequests]);
+    sendMessage({ type: 'send_friend_request', targetUserId });
+  }, [myUserId, sendMessage]);
 
+  // Accept/reject through WebSocket (so server can notify the sender in real time)
   const acceptRequest = useCallback(async (requestId: string) => {
-    const { error } = await supabase
-      .from('friends')
-      .update({ status: 'accepted' })
-      .eq('id', requestId);
-    if (error) console.error('Error accepting friend request:', error);
-    await fetchFriendsAndRequests();
-  }, [supabase, fetchFriendsAndRequests]);
+    sendMessage({ type: 'respond_friend_request', requestId, action: 'accept' });
+  }, [sendMessage]);
 
   const rejectRequest = useCallback(async (requestId: string) => {
-    const { error } = await supabase
-      .from('friends')
-      .delete()
-      .eq('id', requestId);
-    if (error) console.error('Error rejecting friend request:', error);
-    await fetchFriendsAndRequests();
-  }, [supabase, fetchFriendsAndRequests]);
+    sendMessage({ type: 'respond_friend_request', requestId, action: 'reject' });
+  }, [sendMessage]);
 
   return {
     friends,

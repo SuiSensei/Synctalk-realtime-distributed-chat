@@ -21,8 +21,7 @@ import { handleMarkAsRead } from "./handlers/read-receipt";
 import { handleUpdateStatus } from "./handlers/status";
 import { handleUpdateProfile } from "./handlers/profile";
 import { handleGetRooms, handleGetMessages } from "./handlers/query";
-
-// ─── Express ─────────────────────────────────────────────────────────────────
+import { handleSendFriendRequest, handleRespondFriendRequest } from "./handlers/friends";
 
 const app = express();
 app.use(cors());
@@ -37,8 +36,6 @@ const server = app.listen(config.port, () => {
 });
 
 const wss = new WebSocketServer({ noServer: true });
-
-// ─── HTTP Upgrade → WebSocket (Supabase JWT Auth) ────────────────────────────
 
 server.on("upgrade", async (req: HttpIncomingMessage, socket, head) => {
   const handlePreUpgradeError = (err: Error) => {
@@ -56,7 +53,6 @@ server.on("upgrade", async (req: HttpIncomingMessage, socket, head) => {
       return;
     }
 
-    // Validate token with Supabase
     const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
     if (authErr || !user) {
       console.warn("⚠️ Auth rejected:", authErr?.message);
@@ -134,6 +130,8 @@ wss.on("connection", async (ws: WebSocket, req: HttpIncomingMessage) => {
         case "mark_as_read": await handleMarkAsRead(userId, data); break;
         case "update_status": await handleUpdateStatus(userId, profile, data); break;
         case "update_profile": await handleUpdateProfile(userId, data); break;
+        case "send_friend_request": await handleSendFriendRequest(userId, profile, data); break;
+        case "respond_friend_request": await handleRespondFriendRequest(userId, profile, data); break;
         case "get_rooms":
           console.log(`📋 get_rooms from ${profile.username}`);
           await handleGetRooms(userId); break;

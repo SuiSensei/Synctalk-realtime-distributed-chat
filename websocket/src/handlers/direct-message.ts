@@ -13,10 +13,29 @@ export async function handleDirectMessage(
   profile: UserProfile,
   data: { recipientId: string; text: string }
 ) : Promise<void> {
+  // Check if a DM room already exists before creating
+  const existingRoomId = await findExistingDmRoom(userId, data.recipientId);
   const dmRoomId = await getOrCreateDmRoom(userId, data.recipientId);
   if (!dmRoomId) {
     sendToUser(userId, { type: "error", message: "Failed to create DM conversation" });
     return;
+  }
+
+  const isNewRoom = !existingRoomId;
+
+  // If a new room was created, notify both users so their sidebar updates instantly
+  if (isNewRoom) {
+    const { data: roomData } = await supabase
+      .from("room")
+      .select("*")
+      .eq("id", dmRoomId)
+      .single();
+
+    if (roomData) {
+      const roomMsg = { type: "room_created", room: { ...roomData, lastMessage: null, memberCount: 2 } };
+      sendToUser(userId, roomMsg);
+      sendToUser(data.recipientId, roomMsg);
+    }
   }
 
   // If no text, just open the room (used by New Chat dialog)
@@ -62,4 +81,45 @@ export async function handleDirectMessage(
   sendToUser(data.recipientId, outgoing);
   await invalidateMessages(dmRoomId);
   console.log(`📩 DM: ${profile.username} → ${data.recipientId}`);
+}
+
+/**
+ * Check if a DM room already exists between two users (without creating one).
+ */
+async function findExistingDmRoom(userA: string, userB: string): Promise<string | null> {
+  const { data: roomsA } = await supabase
+    .from("room_member")
+    .select("room_id")
+    .eq("user_id", userA);
+
+  if (!roomsA) return null;
+
+  for (const rm of roomsA) {
+    const { data: room } = await supabase
+      .from("room")
+      .select("id")
+      .eq("id", rm.room_id)
+      .eq("is_private", true)
+      .single();
+
+    if (!room) continue;
+
+    const { data: hasB } = await supabase
+      .from("room_member")
+      .select("user_id")
+      .eq("room_id", room.id)
+      .eq("user_id", userB)
+      .single();
+
+    if (!hasB) continue;
+
+    const { count } = await supabase
+      .from("room_member")
+      .select("*", { count: "exact", head: true })
+      .eq("room_id", room.id);
+
+    if (count === 2) return room.id;
+  }
+
+  return null;
 }

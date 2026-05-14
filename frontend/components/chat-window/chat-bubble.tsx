@@ -16,6 +16,7 @@ interface ChatBubbleProps {
   senderName?: string;
   reactions?: any[];
   messageId?: string;
+  myUserId?: string;
 }
 
 export function ChatBubble({
@@ -27,11 +28,20 @@ export function ChatBubble({
   senderName,
   reactions = [],
   messageId,
+  myUserId,
 }: ChatBubbleProps) {
   const { sendMessage } = useWebSocket();
 
   const handleReact = (emoji: string) => {
-    if (messageId) {
+    if (!messageId) return;
+    // Check if user already has this exact emoji — toggle off
+    const myExistingReaction = reactions.find(
+      (r) => r.user_id === myUserId && r.emoji === emoji
+    );
+    if (myExistingReaction) {
+      sendMessage({ type: "remove_reaction", messageId, emoji });
+    } else {
+      // Server will handle replacing any old reaction with the new one
       sendMessage({ type: "add_reaction", messageId, emoji });
     }
   };
