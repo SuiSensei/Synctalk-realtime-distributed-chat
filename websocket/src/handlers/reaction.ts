@@ -4,24 +4,44 @@ import { sendToUser, broadcastToRoom } from "../helpers";
 
 /**
  * Add an emoji reaction to a message.
- * Persists to `message_reaction`, broadcasts updated reactions to room.
+ * Enforces ONE reaction per user per message:
+ * - If the user clicks the same emoji they already have → toggle off (remove it).
+ * - If the user clicks a different emoji → replace the old one.
  */
 export async function handleAddReaction(
   userId: string,
   profile: UserProfile,
   data: { messageId: string; emoji: string; name?: string }
 ): Promise<void> {
-  // Prevent duplicates
+  // Check if user already has a reaction on this message
   const { data: existing } = await supabase
     .from("message_reaction")
-    .select("id")
+    .select("id, emoji")
     .eq("message_id", data.messageId)
     .eq("user_id", userId)
-    .eq("emoji", data.emoji)
     .single();
 
-  if (existing) return;
+  if (existing) {
+    if (existing.emoji === data.emoji) {
+      // Same emoji → toggle off (remove)
+      await supabase
+        .from("message_reaction")
+        .delete()
+        .eq("id", existing.id);
 
+      await broadcastReactions(data.messageId);
+      console.log(`😀 ${profile.username} toggled off ${data.emoji} on ${data.messageId}`);
+      return;
+    }
+
+    // Different emoji → remove old one first
+    await supabase
+      .from("message_reaction")
+      .delete()
+      .eq("id", existing.id);
+  }
+
+  // Insert the new reaction
   await supabase.from("message_reaction").insert({
     message_id: data.messageId,
     user_id: userId,
