@@ -8,22 +8,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, MessageSquare, Users, UserPlus } from "lucide-react";
-import { useRooms } from "@/lib/hooks/use-rooms";
 import { useState } from "react";
 import { AddContactDialog } from "./add-contact-dialog";
 import { NewChatDialog } from "./new-chat-dialog";
+import { NewGroupDialog } from "./new-group-dialog";
 
 export function NewChatDropdown({ onRoomReady }: { onRoomReady?: (roomId: string) => void }) {
-  const { createRoom } = useRooms();
   const [showAddContact, setShowAddContact] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
-
-  const handleNewGroup = () => {
-    const name = window.prompt("Enter new group name:");
-    if (name && name.trim()) {
-      createRoom(name.trim());
-    }
-  };
+  const [showNewGroup, setShowNewGroup] = useState(false);
 
   return (
     <>
@@ -48,7 +41,7 @@ export function NewChatDropdown({ onRoomReady }: { onRoomReady?: (roomId: string
             </div>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleNewGroup} className="p-0 cursor-pointer rounded-[4px] focus:!bg-[#2A2A2A] data-[highlighted]:!bg-[#2A2A2A] focus:!text-[#F3F4F6] data-[highlighted]:!text-[#F3F4F6] transition-colors">
+          <DropdownMenuItem onClick={() => setShowNewGroup(true)} className="p-0 cursor-pointer rounded-[4px] focus:!bg-[#2A2A2A] data-[highlighted]:!bg-[#2A2A2A] focus:!text-[#F3F4F6] data-[highlighted]:!text-[#F3F4F6] transition-colors">
             <div className="flex items-center gap-3 w-full h-full p-2 text-[#F3F4F6]">
               <Users className="w-4 h-4" />
               <span className="text-sm">New Group Chat</span>
@@ -66,6 +59,7 @@ export function NewChatDropdown({ onRoomReady }: { onRoomReady?: (roomId: string
 
       <AddContactDialog open={showAddContact} onOpenChange={setShowAddContact} />
       <NewChatDialog open={showNewChat} onOpenChange={setShowNewChat} onRoomReady={onRoomReady} />
+      <NewGroupDialog open={showNewGroup} onOpenChange={setShowNewGroup} />
     </>
   );
 }

@@ -69,6 +69,7 @@ export function ChatContainer({ activeRoomId, onProfileClick }: ChatContainerPro
               senderName={msg.sender?.username}
               reactions={msg.reactions}
               messageId={msg.id}
+              myUserId={myProfile?.id}
             />
           ))
         )}
