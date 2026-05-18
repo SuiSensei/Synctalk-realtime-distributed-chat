@@ -5,10 +5,12 @@
 A WebSocket-powered chat platform demonstrating distributed system principles in practice.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
 ![WebSocket](https://img.shields.io/badge/WebSocket-010101?style=flat-square&logo=socketdotio&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![Status](https://img.shields.io/badge/Status-In_Development-blue?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
 
 [Overview](#overview) · [Architecture](#architecture) · [Getting Started](#getting-started) · [API Reference](#websocket-api) · [Contributing](#contributing)
 
@@ -35,9 +37,13 @@ The project explores fundamental concepts in distributed computing — including
 - **Multi-user support** — Concurrent client connections handled by a central server
 - **Bidirectional communication** — Full-duplex messaging between clients and server
 - **Message broadcasting** — Efficient relay of messages across all connected peers
-- **Modern frontend** — Clean, responsive user interface
-- **Type-safe backend** — Built with TypeScript for compile-time safety
-- **Distributed-systems foundation** — Designed to demonstrate concurrency, state synchronization, and message handling patterns
+- **User authentication** — Session-based authentication for secure access
+- **Chat rooms and channels** — Multiple conversation spaces for organized discussions
+- **Message persistence** — Chat history stored in a database for reliable retrieval
+- **Typing indicators** — Real-time feedback when other users are composing messages
+- **Modern frontend** — Clean, responsive UI built with Next.js
+- **Type-safe codebase** — End-to-end TypeScript for compile-time safety
+- **Distributed-systems foundation** — Demonstrates concurrency, state synchronization, and message handling patterns
 
 ---
 
@@ -65,8 +71,8 @@ SyncTalk follows a **client-server architecture** in which WebSocket connections
 ### Message Flow
 
 1. The client establishes a persistent WebSocket connection to the server.
-2. The server registers the client within its active connection pool.
-3. When a client sends a message, the server broadcasts it to all connected peers.
+2. The server authenticates the client and registers it within its active connection pool.
+3. When a client sends a message, the server persists it and broadcasts to all peers in the same room.
 4. Clients receive and render messages in real time.
 
 ---
@@ -76,10 +82,10 @@ SyncTalk follows a **client-server architecture** in which WebSocket connections
 | Layer           | Technology                                                |
 | --------------- | --------------------------------------------------------- |
 | Backend         | Node.js, TypeScript, WebSocket (`ws`)                     |
-| Frontend        | Specify your frontend framework (e.g., React, Vue, Vanilla JS) |
+| Frontend        | Next.js, React, TypeScript                                |
 | Protocol        | WebSocket (RFC 6455)                                      |
 | Language        | TypeScript                                                |
-| Package Manager | npm                                                       |
+| Package Manager | pnpm                                                      |
 
 ---
 
@@ -97,7 +103,7 @@ synctalk-realtime-distributed-chat/
 │
 ├── docs/                         # Project documentation
 │
-├── frontend/                     # Client-side application
+├── frontend/                     # Next.js client application
 │
 ├── websocket/                    # WebSocket server
 │   ├── server.ts                 # Main server entry point
@@ -105,7 +111,7 @@ synctalk-realtime-distributed-chat/
 │   ├── tsconfig.json
 │   └── .gitignore
 │
-├── package-lock.json
+├── pnpm-lock.yaml
 └── README.md
 ```
 
@@ -120,14 +126,14 @@ Follow these steps to run SyncTalk locally.
 Ensure the following are installed on your system:
 
 - **Node.js** v18.0.0 or higher — [nodejs.org](https://nodejs.org/)
-- **npm** v9.0.0 or higher (bundled with Node.js)
+- **pnpm** v8.0.0 or higher — [pnpm.io](https://pnpm.io/installation)
 - **Git** — [git-scm.com](https://git-scm.com/)
 
 Verify your installation:
 
 ```bash
 node --version
-npm --version
+pnpm --version
 git --version
 ```
 
@@ -143,21 +149,21 @@ cd synctalk-realtime-distributed-chat
 #### 2. Install root dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 #### 3. Install WebSocket server dependencies
 
 ```bash
 cd websocket
-npm install
+pnpm install
 ```
 
 #### 4. Install frontend dependencies
 
 ```bash
 cd ../frontend
-npm install
+pnpm install
 ```
 
 ### Running the Application
@@ -166,7 +172,7 @@ Start the WebSocket server:
 
 ```bash
 cd websocket
-npm run dev
+pnpm dev
 ```
 
 The server will start on `ws://localhost:8080` (or your configured port).
@@ -175,10 +181,10 @@ In a separate terminal, start the frontend:
 
 ```bash
 cd frontend
-npm run dev
+pnpm dev
 ```
 
-Open your browser and navigate to the frontend URL (typically `http://localhost:3000` or `http://localhost:5173`).
+Open your browser and navigate to `http://localhost:3000`.
 
 ---
 
@@ -205,11 +211,14 @@ Messages are exchanged as JSON-encoded strings:
 
 ### Event Types
 
-| Event Type   | Direction       | Description            |
-| ------------ | --------------- | ---------------------- |
-| `connect`    | Client → Server | Client joins the chat  |
-| `message`    | Bidirectional   | Chat message broadcast |
-| `disconnect` | Client → Server | Client leaves the chat |
+| Event Type   | Direction       | Description                       |
+| ------------ | --------------- | --------------------------------- |
+| `connect`    | Client → Server | Client joins the chat             |
+| `message`    | Bidirectional   | Chat message broadcast            |
+| `typing`     | Bidirectional   | Typing indicator notification     |
+| `join_room`  | Client → Server | Client joins a chat room          |
+| `leave_room` | Client → Server | Client leaves a chat room         |
+| `disconnect` | Client → Server | Client leaves the chat            |
 
 ---
 
@@ -221,11 +230,11 @@ Additional documentation is available in the [`docs/`](./docs) directory.
 
 ## Roadmap
 
-- [ ] User authentication and session management
+- [x] User authentication and session management
+- [x] Chat rooms and channels
+- [x] Message persistence with a database
+- [x] Typing indicators
 - [ ] Private messaging and direct messages
-- [ ] Chat rooms and channels
-- [ ] Message persistence with a database
-- [ ] Typing indicators
 - [ ] Online/offline presence status
 - [ ] File and media sharing
 - [ ] Horizontal scaling with Redis pub/sub
@@ -257,13 +266,13 @@ To propose a new feature, submit a [feature request](./.github/ISSUE_TEMPLATE/fe
 
 ## Authors
 
-- **Jhey Gulde** — *Documentation and Quality Assurance* 
+- **Jhey Gulde** — *Documentation and Quality Assurance*
 - **Gerlie Campion** — *Frontend Developer*
 - **Kathleen Grace Gultiano** — *Frontend Developer*
 - **John Carl Ramirez** — *Full Stack Developer*
 - **Francis Adrian Esteban** — *Backend Developer*
-  
-See the list of [contributors](https://github.com/<your-username>/synctalk-realtime-distributed-chat/contributors) who have participated in this project.
+
+See the list of [contributors](https://github.com/SuiSensei/Synctalk-realtime-distributed-chat/graphs/contributors?from=2%2F14%2F2026) who have participated in this project.
 
 ### Acknowledgments
 
