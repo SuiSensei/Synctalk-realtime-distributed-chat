@@ -255,16 +255,14 @@ To propose a new feature, submit a [feature request](./.github/ISSUE_TEMPLATE/fe
 
 ---
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
 ## Authors
 
-- **Your Name** — *Initial work* — [@your-github](https://github.com/your-github)
-
+- **Jhey Gulde** — *Documentation and Quality Assurance* 
+- **Gerlie Campion** — *Frontend Developer*
+- **Kathleen Grace Gultiano** — *Frontend Developer*
+- **John Carl Ramirez** — *Full Stack Developer*
+- **Francis Adrian Esteban** — *Backend Developer*
+  
 See the list of [contributors](https://github.com/<your-username>/synctalk-realtime-distributed-chat/contributors) who have participated in this project.
 
 ### Acknowledgments
